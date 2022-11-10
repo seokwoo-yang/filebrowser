@@ -3,8 +3,8 @@
     <div v-if="progress" class="progress">
       <div v-bind:style="{ width: this.progress + '%' }"></div>
     </div>
-    <sidebar></sidebar>
-    <main>
+    <sidebar v-if="isAdmin"></sidebar>
+    <main :class="{'user-main': !isAdmin}">
       <router-view></router-view>
       <shell v-if="isExecEnabled && isLogged && user.perm.execute" />
     </main>
@@ -23,6 +23,11 @@ import { enableExec } from "@/utils/constants";
 
 export default {
   name: "layout",
+  data() {
+    return {
+      adminMain: "100%"
+    }
+  },
   components: {
     Sidebar,
     Prompts,
@@ -33,6 +38,9 @@ export default {
     ...mapGetters(["isLogged", "progress"]),
     ...mapState(["user"]),
     isExecEnabled: () => enableExec,
+    isAdmin () {
+      return this.user.perm.admin
+    }
   },
   watch: {
     $route: function () {
@@ -44,3 +52,6 @@ export default {
   },
 };
 </script>
+<style>
+  .user-main { width: 100% !important}
+</style>

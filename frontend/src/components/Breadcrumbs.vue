@@ -8,21 +8,41 @@
     >
       <i class="material-icons">home</i>
     </component>
-
     <span v-for="(link, index) in items" :key="index">
       <span class="chevron"
         ><i class="material-icons">keyboard_arrow_right</i></span
       >
       <component :is="element" :to="link.url">{{ link.name }}</component>
     </span>
+    <span v-if="!user.perm.admin" v-bind:style="{marginLeft: 'auto'}">
+        <button
+          @click="$store.commit('showHover', 'newDir')"
+          class="action"
+          :aria-label="$t('sidebar.newFolder')"
+          :title="$t('sidebar.newFolder')"
+        >
+          <i class="material-icons">create_new_folder</i>
+        </button>
+
+        <button
+          @click="$store.commit('showHover', 'newFile')"
+          class="action"
+          :aria-label="$t('sidebar.newFile')"
+          :title="$t('sidebar.newFile')"
+        >
+          <i class="material-icons">note_add</i>
+        </button>
+      </span>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "breadcrumbs",
   props: ["base", "noLink"],
   computed: {
+    ...mapState(["user"]),
     items() {
       const relativePath = this.$route.path.replace(this.base, "");
       let parts = relativePath.split("/");
