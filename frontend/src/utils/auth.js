@@ -32,11 +32,17 @@ export async function validateLogin() {
 export async function login(username, password, recaptcha) {
   const data = { username, password, recaptcha };
 
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  const queryString = location.search.split("=");
+  if (queryString[0] == "?username") {
+    headers["X-pass-user"] = queryString[1];
+  }
+
   const res = await fetch(`${baseURL}/api/login`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: headers,
     body: JSON.stringify(data),
   });
 
